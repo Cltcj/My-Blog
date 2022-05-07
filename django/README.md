@@ -1,6 +1,6 @@
 # django
 
-## 博客搭建第一天
+## 博客搭建
 
 **配置虚拟环境**
 
@@ -39,9 +39,30 @@ source ./blogEnv/bin/activate
 
 运行Django服务器
 
+python3 manage.py runserver
+
 ![image](https://user-images.githubusercontent.com/81791654/167246548-223cadcb-85bb-414c-b589-4fdfcf0d8587.png)
 
-
+系统打印出这些信息，说明服务器启动成功了，打开chrome浏览器，输入http://127.0.0.1:8000/ ，即倒数第2排信息提示我们的服务器地址。看到下面的界面：
 ![image](https://user-images.githubusercontent.com/81791654/167246685-85d39223-a6f7-4605-af78-23ce0ff4a064.png)
+
+django 默认的语言是英语，所以显示给我们的欢迎页面是英文的。我们在 django 的配置文件里稍作修改，让它支持中文。用任何一个文本编辑器打开 settings.py 文件，找到如下的两行代码：
+![image](https://user-images.githubusercontent.com/81791654/167247055-3eab3d87-4da9-457a-b5cb-aed51fcadf3c.png)
+
+修改完之后，我们再执行python3 manage.py runserver，然后在本地浏览器输入127.0.0.1:8000得到中文的界面：
+![image](https://user-images.githubusercontent.com/81791654/167247085-e04888bd-a2aa-4ac6-a358-f29f221e8bba.png)
+
+
+## 创建并配置APP功能模块
+
+**创建APP**
+
+在Django中的一个app代表一个功能模块。开发者可以将不同功能的模块放在不同的app中, 方便代码的复用。app就是项目的基石，因此开发博客的第一步就是创建新的app，用来实现跟文章相关的功能模块。
+
+打开命令行，进入项目所在的目录：（注意Django的操作必须在虚拟环境下进行）
+
+输入python manage.py startapp blogapp，创建名为blogapp的app，再次查看有下列目录和文件。
+
+![image](https://user-images.githubusercontent.com/81791654/167247362-31db6fc4-f15e-4b76-9442-a130321484bd.png)
 
 

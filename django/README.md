@@ -204,3 +204,168 @@ class ArticlePost(models.Model):
 Django的迁移代码是由模型文件自动生成的，它本质上只是个历史记录，Django可以用它来进行数据库的滚动更新，通过这种方式使其能够和当前的模型匹配。
 
 在虚拟环境中进入my_blog文件夹，输入python3 manage.py makemigrations，对模型的更改创建新的迁移表：
+
+![image](https://user-images.githubusercontent.com/81791654/167298895-88ac0081-0992-445d-b9eb-e698db3020f3.png)
+
+![image](https://user-images.githubusercontent.com/81791654/167298910-5a900fd9-94b0-419a-9899-827c0e72f4a4.png)
+
+
+## View视图初探
+
+数据库虽然已经有了，但是用户通常只需要这个庞大数据库中的很小一部分进行查看、修改等操作。为此还需要代码来恰当的取出并展示数据，这一部分代码就被称为视图。
+
+Django 中视图的概念是「一类具有相同功能和模板的网页的集合」。比如，在一个博客应用中，你可能会创建如下几个视图：
+
+博客首页：展示最近的几项内容。
+内容“详情”页：详细展示某项内容。
+评论处理器：用于响应为一项内容添加评论的操作
+
+这些需求都靠视图（View）来完成。
+
+首先写一个最简单的视图函数，在浏览器中打印出Hello World!字符串。
+
+打开blogs/views.py，写出视图函数：
+
+![image](https://user-images.githubusercontent.com/81791654/167299158-965cfd9e-96f5-40f0-8d4e-90718a049de0.png)
+
+网页都是从视图派生而来。每一个视图表现为一个简单的Python函数，它必须要做的只有两件事：返回一个包含被请求页面内容的 HttpResponse对象，或者抛出一个异常，比如 Http404 。至于你还想干些什么，随便你。
+
+视图函数中的request与网页发来的请求有关，里面包含get或post的内容、用户浏览器、系统等信息。Django调用article_list函数时会返回一个含字符串的 HttpResponse对象。
+
+有了视图函数，还需要配置URLconfs，将用户请求的URL链接关联起来。换句话说，URLconfs的作用是将URL映射到视图中。
+
+在前面的文章中已经将URL分发给了article应用，因此这里只需要修改之前添加的article/urls.py就可以。添加以下代码
+
+![image](https://user-images.githubusercontent.com/81791654/167299138-3fc1912c-f413-4b81-b74c-74dee5c7ec20.png)
+
+![image](https://user-images.githubusercontent.com/81791654/167299313-442f51b4-d1f8-4f45-9639-5b9c31226e59.png)
+
+Django 将会根据用户请求的 URL 来选择使用哪个视图。本例中当用户请求article/article-list链接时，会调用views.py中的article_list函数，并返回渲染后的对象。参数name用于反查url地址，相当于给url起了个名字，以后会用到。
+
+测试：运行python3 manage.py runserver
+
+成功运行后，打开浏览器，输入url地址http://127.0.0.1:8000/blogs/article-list/，其中127.0.0.1:8000是调试服务器的本地地址，blogs是项目路由my_blog\urls.py分发的地址，article-list是刚才配置的blogs\urls.py应用分发的地址。
+
+浏览器打开：http://127.0.0.1:8000/blogs/article-list/
+
+**准备工作**
+
+在章节编写Model模型中虽然定义了数据库表，但是这个表是空的，不方便展示View调取数据的效果。所以在写View之前，需要往数据表里记录一些数据。接下来就做这个工作。
+
+网站后台概念
+网站后台，有时也称为网站管理后台，是指用于管理网站的一系列操作，如：数据的增加、更新、删除等。在项目开发的初期，因为没有真实的用户数据和完整的测试环境，会频繁地使用后台修改测试数据。
+
+Django内置了一个很好的后台管理工具，只需要些少量代码，就可以实现强大的功能。
+
+创建管理员账号（Superuser）
+管理员账号（Superuser）是可以进入网站后台，对数据进行维护的账号，具有很高的权限。这里我们需要创建一个管理员账号，以便添加后续的测试数据。
+
+虚拟环境中输入python3 manage.py createsuperuser指令，创建管理员账号：
+
+![image](https://user-images.githubusercontent.com/81791654/167299706-a1318629-209d-4043-a057-11de721eb8d8.png)
+
+将ArticlePost注册到后台中
+接下来我们需要“告诉”Django，后台中需要添加ArticlePost这个数据表供管理。
+
+打开article/admin.py，写入以下代码：
+
+article/admin.py
+
+from django.contrib import admin
+
+# 别忘了导入ArticlerPost
+from .models import ArticlePost
+
+# 注册ArticlePost到admin中
+admin.site.register(ArticlePost)
+
+这样就简单的注册好了。
+
+在后台中遨游
+细心的同学可能已经发现，Django项目生成的时候就自动配置好了后台的settings和url，因此不需要我们再操心了。
+
+启动server，在浏览器中输入http://127.0.0.1:8000/admin/，一切正常的话就看到下面的登录界面了：
+![image](https://user-images.githubusercontent.com/81791654/167300123-a4556546-c977-499c-b37a-c67b03226ce5.png)
+
+登录进去，有如下界面
+![image](https://user-images.githubusercontent.com/81791654/167300140-878984bd-5b50-4161-a75d-9fa0f7eb1024.png)
+
+
+## 改写View视图
+
+为了让视图真正发挥作用，改写blogs/views.py中的article_list视图函数：
+
+blogs/views.py
+
+from django.shortcuts import render
+
+# 导入数据模型ArticlePost
+from .models import ArticlePost
+
+def article_list(request):
+    # 取出所有博客文章
+    articles = ArticlePost.objects.all()
+    # 需要传递给模板（templates）的对象
+    context = { 'articles': articles }
+    # render函数：载入模板，并返回context对象
+    return render(request, 'article/list.html', context)
+
+
+代码同样很直白，分析如下：
+
+from .models import ArticlePost从models.py中导入ArticlePost数据类
+
+ArticlePost.objects.all()是数据类的方法，可以获得所有的对象（即博客文章），并传递给articles变量
+
+context定义了需要传递给模板的上下文，这里即articles
+
+最后返回了render函数。它的作用是结合模板和上下文，并返回渲染后的HttpResponse对象。通俗的讲就是把context的内容，加载进模板，并通过浏览器呈现。
+render的变量分解如下：
+
+request是固定的request对象，照着写就可以
+blogs/list.html定义了模板文件的位置、名称
+context定义了需要传入模板文件的上下文
+视图函数这样就写好了。
+
+**编写模板（template）**
+
+在前面的视图中我们定义了模板的位置在blogs/list.html，因此在根目录下新建templates文件夹，再新建article文件夹，再新建list.html文件，即：
+
+
+HTML是一种用于创建网页的标记语言。它被用来结构化信息，标注哪些文字是标题、哪些文字是正文等（当然不仅仅这点功能）。也可以简单理解为“给数据排版”的文件，跟你写文档用的Office Word一样一样的 。
+
+在list.html文件中写入：
+
+templates/article/list.html
+
+{% for article in articles %}
+    <p>{{ article.title }}</p>
+{% endfor %}
+Django通过模板来动态生成HTML，其中就包含描述动态内容的一些特殊语法：
+
+{% for article in articles %}：articles为视图函数的context传递过来的上下文，即所有文章的集合。{% for %}循坏表示依次取出articles中的元素，命名为article，并分别执行接下来操作。末尾用{% endfor %}告诉Django循环结束的位置。
+
+使用.符号来访问变量的属性。这里的article为模型中的某一条文章；我们在前面的ArticlePost中定义了文章的标题叫title，因此这里可以用article.title来访问文章的标题。
+
+<p>...</p>即为html语言，中间包裹了一个段落的文字。
+
+再重新启动服务器:
+http://127.0.0.1:8000/blogs/article-list/
+是空白的，因为我们啥都没写
+成功！
+
+虽然简陋，但是已经走通了MTV（model、template、view）环路。
+
+不要激动，精彩的还在后面。
+
+## 使用 Bootstrap 4 改写模板文件
+
+Bootstrap是用于网站开发的开源前端框架（“前端”指的是展现给最终用户的界面），它提供字体排印、窗体、按钮、导航及其他各种组件，旨在使动态网页和Web应用的开发更加容易。
+
+Bootstrap有几个版本都比较流行，我们选择最新版本的Bootstrap 4：下载地址，并解压。
+
+然后在项目根目录下新建目录static/bootstrap/，用于存放Bootstrap静态文件。静态文件通常指那些不会改变的文件。Bootstrap中的css、js文件，就是静态文件。
+
+把刚才解压出来的css和js两个文件夹复制进去。
+
+因为bootstrap.js依赖 jquery.js 和 popper.js 才能正常运行，因此这两个文件我们也需要一并下载保存。附上官网下载链接（进入下载页面，复制粘贴代码到新文件即可）：

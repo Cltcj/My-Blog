@@ -11,13 +11,21 @@
 新建一个文件夹，如：myblog。进入此文件夹：
 
 安装包
+
+```py
 sudo apt-get install python3-blogEnv
+```
+
 创建虚拟环境命令
+```py
 python3 -m venv blogEnv(虚拟环境名)
+```
 这个命令执行完毕后，目录中会出现一个名为venv的子目录，这里就是一个全新的虚拟环境，包含这个项目专用的Python解释器。
 
 激活环境
+```py
 source ./blogEnv/bin/activate
+```
 当盘符前有(blogEnv)标识说明进入venv成功。
 
 退出虚拟环境
@@ -25,11 +33,11 @@ source ./blogEnv/bin/activate
 
 **安装Django**
 
-在虚拟环境下，输入命令pip install django==2.2.3：
+在虚拟环境下，输入命令`pip install django==2.2.3`：
 
 **创建项目**
 
-&emsp;&emsp;执行django-admin startproject 项目名 创建对应项目文件夹
+&emsp;&emsp;执行`django-admin startproject 项目名` 创建对应项目文件夹
 
 ![image](https://user-images.githubusercontent.com/81791654/167246401-31ff3d06-163c-449e-bdf0-76364762c949.png)
 
@@ -38,9 +46,9 @@ source ./blogEnv/bin/activate
 ![image](https://user-images.githubusercontent.com/81791654/167246495-39e1c01e-d53f-4f8e-8aec-107edd49cc78.png)
 
 运行Django服务器
-
+```py
 python3 manage.py runserver
-
+```
 ![image](https://user-images.githubusercontent.com/81791654/167246548-223cadcb-85bb-414c-b589-4fdfcf0d8587.png)
 
 系统打印出这些信息，说明服务器启动成功了，打开chrome浏览器，输入http://127.0.0.1:8000/ ，即倒数第2排信息提示我们的服务器地址。看到下面的界面：
@@ -61,7 +69,7 @@ django 默认的语言是英语，所以显示给我们的欢迎页面是英文�
 
 打开命令行，进入项目所在的目录：（注意Django的操作必须在虚拟环境下进行）
 
-输入python manage.py startapp blogapp，创建名为blogapp的app，再次查看有下列目录和文件。
+输入`python manage.py startapp blogapp`，创建名为blogapp的app，再次查看有下列目录和文件。
 
 ![image](https://user-images.githubusercontent.com/81791654/167247362-31db6fc4-f15e-4b76-9442-a130321484bd.png)
 
@@ -176,7 +184,7 @@ ArticlePost类定义了一篇文章所必须具备的要素：作者、标题、
 __str__方法定义了需要表示数据时应该显示的名称。给模型增加 __str__方法是很重要的，它最常见的就是在Django管理后台中做为对象的显示值。因此应该总是返回一个友好易读的字符串。
 
 完整代码：
-
+```py
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -193,7 +201,7 @@ class ArticlePost(models.Model):
 
     def __str__(self):
         return self.title
-        
+```        
         
 **数据迁移（Migrations）**
 
@@ -268,7 +276,7 @@ Django内置了一个很好的后台管理工具，只需要些少量代码，�
 接下来我们需要“告诉”Django，后台中需要添加ArticlePost这个数据表供管理。
 
 打开article/admin.py，写入以下代码：
-
+```py
 article/admin.py
 
 from django.contrib import admin
@@ -278,7 +286,7 @@ from .models import ArticlePost
 
 # 注册ArticlePost到admin中
 admin.site.register(ArticlePost)
-
+```
 这样就简单的注册好了。
 
 在后台中遨游
@@ -294,12 +302,13 @@ admin.site.register(ArticlePost)
 ## 改写View视图
 
 为了让视图真正发挥作用，改写blogs/views.py中的article_list视图函数：
-
+```py
 blogs/views.py
 
 from django.shortcuts import render
-
+```
 # 导入数据模型ArticlePost
+```py
 from .models import ArticlePost
 
 def article_list(request):
@@ -309,13 +318,13 @@ def article_list(request):
     context = { 'articles': articles }
     # render函数：载入模板，并返回context对象
     return render(request, 'article/list.html', context)
-
+```
 
 代码同样很直白，分析如下：
 
-from .models import ArticlePost从models.py中导入ArticlePost数据类
+`from .models import ArticlePost`从models.py中导入ArticlePost数据类
 
-ArticlePost.objects.all()是数据类的方法，可以获得所有的对象（即博客文章），并传递给articles变量
+`ArticlePost.objects.all()`是数据类的方法，可以获得所有的对象（即博客文章），并传递给articles变量
 
 context定义了需要传递给模板的上下文，这里即articles
 
@@ -335,12 +344,13 @@ context定义了需要传入模板文件的上下文
 HTML是一种用于创建网页的标记语言。它被用来结构化信息，标注哪些文字是标题、哪些文字是正文等（当然不仅仅这点功能）。也可以简单理解为“给数据排版”的文件，跟你写文档用的Office Word一样一样的 。
 
 在list.html文件中写入：
-
+```html
 templates/article/list.html
 
 {% for article in articles %}
     <p>{{ article.title }}</p>
 {% endfor %}
+```
 Django通过模板来动态生成HTML，其中就包含描述动态内容的一些特殊语法：
 
 {% for article in articles %}：articles为视图函数的context传递过来的上下文，即所有文章的集合。{% for %}循坏表示依次取出articles中的元素，命名为article，并分别执行接下来操作。末尾用{% endfor %}告诉Django循环结束的位置。
@@ -374,7 +384,7 @@ Bootstrap有几个版本都比较流行，我们选择最新版本的Bootstrap 4
 因为在Django中需要指定静态文件的存放位置，才能够在模板中正确引用它们。因此在settings.py的末尾加上：
 
 ![image](https://user-images.githubusercontent.com/81791654/168419107-655d4e27-6cd8-4885-b691-858d2bf887be.png)
-
+```py
 my_blog/settings.py
 
 ...
@@ -382,7 +392,7 @@ my_blog/settings.py
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
-
+```
 再确认一下settings.py中有没有STATIC_URL = '/static/'字段，如果没有把它也加在后面。
 
 
@@ -413,7 +423,7 @@ Bootstrap是非常优秀的前端框架，上手简单，所以很流行。你�
 这里会一次性写大量代码，不要着急慢慢看，理解了就很简单了。
 
 **首先写base.html：**
-
+```html
 templates/base.html
 
 <!-- 
@@ -457,4 +467,4 @@ templates/base.html
 </body>
 
 </html>
-
+```

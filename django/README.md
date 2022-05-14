@@ -369,3 +369,92 @@ Bootstrap有几个版本都比较流行，我们选择最新版本的Bootstrap 4
 把刚才解压出来的css和js两个文件夹复制进去。
 
 因为bootstrap.js依赖 jquery.js 和 popper.js 才能正常运行，因此这两个文件我们也需要一并下载保存。附上官网下载链接（进入下载页面，复制粘贴代码到新文件即可）：
+
+
+因为在Django中需要指定静态文件的存放位置，才能够在模板中正确引用它们。因此在settings.py的末尾加上：
+
+![image](https://user-images.githubusercontent.com/81791654/168419107-655d4e27-6cd8-4885-b691-858d2bf887be.png)
+
+my_blog/settings.py
+
+...
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
+再确认一下settings.py中有没有STATIC_URL = '/static/'字段，如果没有把它也加在后面。
+
+
+**编写模板**
+
+在根目录下的templates/中，新建三个文件：
+
+base.html是整个项目的模板基础，所有的网页都从它继承；
+
+header.html是网页顶部的导航栏；
+
+footer.html是网页底部的注脚。
+
+这三个文件在每个页面中通常都是不变的，独立出来可以避免重复写同样的代码，提高维护性。
+
+现在templates\的结构像下面这个样子：
+
+![image](https://user-images.githubusercontent.com/81791654/168419455-c14b7baf-c45b-4783-96be-ca058072c924.png)
+
+加上之前的list.html，接下来就要重新写这4个文件了。
+
+因为前端知识非常博大精深，并且也不是Django学习的重点，本教程不会展开篇幅去讲。如果之前没接触过前端知识也没关系，这里可以先复制粘贴，不影响后面Django的学习。
+
+你可以试着改写其中的某段代码，看看会对页面产生什么样的影响；遇到不懂的就在Bootstrap官方文档找答案。慢慢就会明白它的运行机制，毕竟Bootstrap真的是非常简单易用的工具。
+
+Bootstrap是非常优秀的前端框架，上手简单，所以很流行。你可以在官方网站上进行系统的学习。通篇看Bootstrap文档比较枯燥，因此建议你可以像查字典一样，需要用哪个模块，就到官网上找相关的代码，修改一下拷贝到你的项目中。
+
+这里会一次性写大量代码，不要着急慢慢看，理解了就很简单了。
+
+**首先写base.html：**
+
+templates/base.html
+
+<!-- 
+    载入静态文件
+    使用 Django 3 学习的读者改为 {% load static %}
+-->
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<!-- 网站主语言 -->
+<html lang="zh-cn">
+
+<head>
+    <!-- 网站采用的字符编码 -->
+    <meta charset="utf-8">
+    <!-- 预留网站标题的位置 -->
+    <title>{% block title %}{% endblock %}</title>
+    <!-- 引入bootstrap的css文件 -->
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+</head>
+
+<body>
+    <!-- 引入导航栏 -->
+    {% include 'header.html' %}
+    <!-- 预留具体页面的位置 -->
+    {% block content %}{% endblock content %}
+    <!-- 引入注脚 -->
+    {% include 'footer.html' %}
+    <!-- bootstrap.js 依赖 jquery.js 和popper.js，因此在这里引入 -->
+    <script src="{% static 'jquery/jquery-3.3.1.js' %}"></script>
+
+    <!-- 
+        popper.js 采用 cdn 远程引入，意思是你不需要把它下载到本地。
+        在实际的开发中推荐静态文件尽量都使用 cdn 的形式。 
+        教程采用本地引入是为了让读者了解静态文件本地部署的流程。
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1-lts/dist/umd/popper.min.js"></script>
+
+    <!-- 引入bootstrap的js文件 -->
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+</body>
+
+</html>
+

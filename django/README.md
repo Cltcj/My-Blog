@@ -468,3 +468,179 @@ templates/base.html
 
 </html>
 ```
+
+模板中要加上 {% load staticfiles %} 之后，才可使用 {% static 'path' %} 引用静态文件。
+HTML语法中，所有的内容都被标签包裹；标签及标签中的属性可以对内容进行排印、解释说明等作用。
+<head></head>标签内包含网页的元数据，是不会在页面内显示出来的。<body></body>标签内才是网页会显示的内容。
+留意Bootstrap的css、js文件分别是如何引入的
+jquery.js 和 popper.js 要在 bootstrap.js 前引入。
+
+然后是header.html：
+```html
+templates/header.html
+
+<!-- 定义导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+
+    <!-- 导航栏商标 -->
+    <a class="navbar-brand" href="#">我的博客</a>
+
+    <!-- 导航入口 -->
+    <div>
+      <ul class="navbar-nav">
+        <!-- 条目 -->
+        <li class="nav-item">
+          <a class="nav-link" href="#">文章</a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+```
+标签内的class属性是Bootstrap样式的定义方法。试着改写或删除其中一些内容，观察页面的变化。
+
+然后改写之前的list.html：
+
+```html
+<!-- extends表明此页面继承自 base.html 文件 -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!-- 写入 base.html 中定义的 title -->
+{% block title %}
+    首页
+{% endblock title %}
+
+<!-- 写入 base.html 中定义的 content -->
+{% block content %}
+
+<!-- 定义放置文章标题的div容器 -->
+<div class="container">
+    <div class="row mt-2">
+
+        {% for article in articles %}
+        <!-- 文章内容 -->
+        <div class="col-4 mb-4">
+        <!-- 卡片容器 -->
+            <div class="card h-100">
+                <!-- 标题 -->
+                <h4 class="card-header">{{ article.title }}</h4>
+                <!-- 摘要 -->
+                <div class="card-body">
+                    <p class="card-text">{{ article.body|slice:'100' }}...</p>
+                </div>
+                <!-- 注脚 -->
+                <div class="card-footer">
+                    <a href="#" class="btn btn-primary">阅读本文</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock content %}
+```
+留意{% block title %}和{% block content %}是如何与base.html中相对应起来的。
+摘要中的{{ article.body|slice:'100' }}取出了文章的正文；其中的|slice:'100'是Django的过滤器语法，表示取出正文的前100个字符，避免摘要太长。
+最后写入footer.html：
+```html
+{% load staticfiles %}
+<!-- Footer -->
+<div>
+    <br><br><br>
+</div>
+<footer class="py-3 bg-dark fixed-bottom">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; www.dusaiphoto.com 2018</p>
+    </div>
+</footer>
+```
+
+让我们来捋一捋发生了什么：
+
+当我们通过url访问list.html时，顶部的{% extends "base.html" %}告诉Django：“这个文件是继承base.html的，你去调用它吧。”
+
+于是Django就老老实实去渲染base.html文件：
+
+其中的{% include 'header.html' %}表明这里需要加入header.html的内容
+{% include 'footer.html' %}加入footer.html的内容
+{% block content %}{% endblock content %}表明这里应该加入list.html中的对应块的内容
+
+## Django搭建个人博客：编写文章详情页面
+
+编写视图函数：
+
+打开article/views.py，增加文章详情页面的视图函数article_detail()：
+
+```py
+article/views.py
+
+...
+
+# 文章详情
+def article_detail(request, id):
+    # 取出相应的文章
+    article = ArticlePost.objects.get(id=id)
+    # 需要传递给模板的对象
+    context = { 'article': article }
+    # 载入模板，并返回context对象
+    return render(request, 'article/detail.html', context)
+```
+
+article_detail(request, id)函数中多了id这个参数。注意我们在写model的时候并没有写叫做id的字段，这是Django自动生成的用于索引数据表的主键（Primary Key，即pk）。有了它才有办法知道到底应该取出哪篇文章。
+
+ArticlePost.objects.get(id=id)意思是在所有文章中，取出id值相符合的唯一的一篇文章。
+
+然后编写article/urls.py，配置路由地址：
+
+```py
+article/urls.py
+
+...
+
+urlpatterns = [
+    ...
+
+    # 文章详情
+    path('article-detail/<int:id>/', views.article_detail, name='article_detail'),
+]
+```
+<int:id>：Django2.0的path新语法用尖括号<>定义需要传递的参数。这里需要传递名叫id的整数到视图函数中去。
+
+重申一下老版本的Django是没有path语法的。
+```py
+<!-- extends表明此页面继承自 base.html 文件 -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!-- 写入 base.html 中定义的 title -->
+{% block title %}
+    文章详情
+{% endblock title %}
+
+<!-- 写入 base.html 中定义的 content -->
+{% block content %}
+
+<!-- 文章详情 -->
+<div class="container">
+    <div class="row">
+        <!-- 标题及作者 -->
+        <h1 class="col-12 mt-4 mb-4">{{ article.title }}</h1>
+        <div class="col-12 alert alert-success">作者：{{ article.author }}</div>
+        <!-- 文章正文 -->
+        <div class="col-12">
+            <p>{{ article.body }}</p>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+```
+这里我们用{{ article.xxx }}取出了文章标题、作者以及正文。
+
+前面我们已经通过后台创建了几篇文章，这里将取出id为1的一篇文章测试效果。
+
+运行开发服务器后，在浏览器中输入http://127.0.0.1:8000/blogs/article-detail/1/：

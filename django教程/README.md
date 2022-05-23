@@ -183,12 +183,10 @@ TEMPLATES = [
 
 我们现在修改 views.py，增加一个新的对象，用于向模板提交数据：
 ```py
-from django.shortcuts import render
- 
-def test(request):
+def hello(request):
     context = {}
-    context['welcome'] = '欢迎访问我的博客！'
-    return render(request, 'test.html', context)
+    context['hello'] = 'Hello World!'
+    return render(request, 'hello.html', context)                                                     
 ```
 
 修改urls.py 文件代码
@@ -198,20 +196,155 @@ from django.urls import path
 from . import views
  
 urlpatterns = [
-    path('test/', views.test),
+    path('hello/', hello.test),
 ]
 ```
+
 再运行一下manage.py
-![image](https://user-images.githubusercontent.com/81791654/169738205-e89035f4-dcee-4edc-a6ef-f29b61f68b5f.png)
-打开浏览器输入http://127.0.0.1:8000/
-![image](https://user-images.githubusercontent.com/81791654/169738206-1524f596-2086-437c-b50c-131a37936af1.png)
+
+`python3 manage.py runserver`
+
+打开浏览器输入http://127.0.0.1:8000/hello/
+![image](https://user-images.githubusercontent.com/81791654/169740625-af751b48-3b56-445e-850e-1155ee56ddab.png)
+
+可以看到，我们这里使用 render 来替代之前使用的 HttpResponse。render 还使用了一个字典 context 作为参数。
+
+context 字典中元素的键值 hello 对应了模板中的变量 {{ hello }}。
 
 
 
+这样我们就完成了使用模板来输出数据，从而实现数据与视图分离。
+
+接下来我们将具体介绍模板中常用的语法规则。
+
+### Django 模板标签
+
+**变量**
+
+**模板语法：**
+
+```py
+view：｛"HTML变量名" : "views变量名"｝
+HTML：｛｛变量名｝｝
+```
+
+增加`views.py`的文件代码
+
+```py
+from django.shortcuts import render
+
+def thanks(request):
+  views_name = "谢谢你"
+  return  render(request,"thanks.html", {"name":views_name})
+```
+
+再增加'urls.py'的文件代码
+
+```html
+path('thanks/', views.thanks),
+```
+
+在templates文件夹中增加的 `thanks.html` 内容为：
+
+```html
+<p>{{ name }}</p>
+```
+
+再次访问 http://127.0.0.1:8000/thanks，可以看到页面：
+
+![image](https://user-images.githubusercontent.com/81791654/169764789-51f66151-ca4a-4783-aac3-e6786a59d29d.png)
+
+**列表**
+
+将views.py中的代码改写为：
+
+```py
+from django.shortcuts import render
+
+def thanks(request):
+    views_list = ["谢谢你","谢谢你","谢谢你"]
+    return render(request, "thanks.html", {"views_list": views_list})
+```
+
+templates 中的 `thanks.html`中，可以用 . 索引下标取出对应的元素。
+
+在`thanks.html`中改写：
+
+```html
+<p>{{ views_list }}</p>   # 取出整个列表
+<p>{{ views_list.0 }}</p> # 取出列表的第一个元素
+```
+
+![image](https://user-images.githubusercontent.com/81791654/169767573-d07a4893-8693-45f3-96bb-6a6031d1507c.png)
+
+**字典**
+
+```py
+from django.shortcuts import render
+
+def thanks(request):
+    views_dict = {"name":"谢谢你"}
+    return render(request, "thanks.html", {"views_dict": views_dict})
+```
+
+templates 中的 thanks.html中，可以用 .键 取出对应的值。
+
+```html
+<p>{{ views_dict }}</p>
+<p>{{ views_dict.name }}</p>
+```
+再次访问 http://127.0.0.1:8000/thanks，可以看到页面：
+
+![image](https://user-images.githubusercontent.com/81791654/169769051-c34e88e0-bd4b-41a8-a503-790bb1a865a1.png)
+
+**过滤器**
+
+模板语法：
+
+`{{ 变量名 | 过滤器：可选参数 }}`
+
+模板过滤器可以在变量被显示前修改它，过滤器使用管道字符，如下所示：
+
+`{{ name|lower }}`
+
+{{ name }} 变量被过滤器 lower 处理后，文档大写转换文本为小写。
+
+过滤管道可以被* 套接* ，既是说，一个过滤器管道的输出又可以作为下一个管道的输入：
+
+`{{ my_list|first|upper }}`
+
+以上实例将第一个元素并将其转化为大写。
+
+有些过滤器有参数。 过滤器的参数跟随冒号之后并且总是以双引号包含。 例如：
+
+`{{ bio|truncatewords:"30" }}`
+
+这个将显示变量 bio 的前30个词。
+
+其他过滤器：
+
+* addslashes : 添加反斜杠到任何反斜杠、单引号或者双引号前面。
+
+* date : 按指定的格式字符串参数格式化 date 或者 datetime 对象，实例：`{{ pub_date|date:"F j, Y" }}`
 
 
+**default**
 
+default 为变量提供一个默认值。
 
+如果 views 传的变量的布尔值是 false，则使用指定的默认值。
+
+以下值为 false：
+
+`0  0.0  False  0j  ""  []  ()  set()  {}  None`
+
+```py
+from django.shortcuts import render
+
+def thanks(request):
+    name = 0
+    return render(request, "thanks.html", {"name": name})
+```
 
 
 

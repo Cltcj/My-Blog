@@ -346,6 +346,86 @@ def thanks(request):
     return render(request, "thanks.html", {"name": name})
 ```
 
+修改thanks.html为：
+```html
+{{ name|default:"谢谢你" }}
+```
+
+**length**
+
+返回对象的长度，适用于字符串和列表。
+
+字典返回的是键值对的数量，集合返回的是去重后的长度。
+
+修改views.py的文件代码
+```py
+from django.shortcuts import render
+
+def thanks(request):
+    name ="谢谢你"
+    return render(request, "thanks.html", {"name": name})
+```
+
+修改thanks.html文件代码
+
+```html
+{{ name|length}}
+```
+
+**filesizeformat**
+
+以更易读的方式显示文件的大小（即'13 KB', '4.1 MB', '102 bytes'等）。
+
+字典返回的是键值对的数量，集合返回的是去重后的长度。
+
+修改views.py的文件代码
+```py
+from django.shortcuts import render
+
+def thanks(request):
+    num=1024
+    return render(request, "thanks.html", {"num": num})
+```
+
+修改thanks.html文件代码
+```html
+{{ num|filesizeformat}}
+```
+再次访问 http://127.0.0.1:8000/thanks，可以看到页面：
+
+**date**
+
+根据给定格式对一个日期变量进行格式化。
+
+格式 `Y-m-d H:i:s` 返回 年-月-日 小时:分钟:秒 的格式时间。
+
+修改views.py的文件代码
+```py
+from django.shortcuts import render
+
+def thanks(request):
+    import datetime
+    now = datetime.datetime.now()
+    return render(request, "thanks.html", {"time": now})
+```
+
+修改thanks.html文件代码
+```html
+{{ time|date:"Y-m-d" }}
+```
+
+再次访问 http://127.0.0.1:8000/thanks，可以看到页面
+
+**truncatechars**
+
+如果字符串包含的字符总个数多于指定的字符数量，那么会被截断掉后面的部分。
+
+截断的字符串将以 ... 结尾。
+
+
+
+
+
 
 
 

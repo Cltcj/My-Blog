@@ -10,9 +10,9 @@
 
 * 完善的文档：经过 10 余年的发展和完善，`Django` 官方提供了完善的在线文档，为开发者解决问题提供支持。
 * 集成 `ORM` 组件：`Django` 的 `Model` 层自带数据库 `ORM` 组件，为操作不同类型的数据库提供了统一的方式。
-* `URL`映射技术：`Django`使用正则表达式管理`URL`映射，因此给开发者带来了极高的灵活性。
-* 后台管理系统：开发者只需通过简单的几行配置和代码就可以实现完整的后台数据管理`Web`控制台。
-* 错误信息提示：在开发调试过程中如果出现运行异常，`Django`可以提供非常完整的错误信息帮助开发者定位问题。
+* `URL` 映射技术：`Django` 使用正则表达式管理 `URL` 映射，因此给开发者带来了极高的灵活性。
+* 后台管理系统：开发者只需通过简单的几行配置和代码就可以实现完整的后台数据管理 `Web` 控制台。
+* 错误信息提示：在开发调试过程中如果出现运行异常，`Django` 可以提供非常完整的错误信息帮助开发者定位问题。
 
 ##  Django设计模式-MTV
 
@@ -53,32 +53,32 @@ django-admin startproject cBlog
 
 目录说明：
 
-* cBlog: 项目的容器。
+* `cBlog`: 项目的容器。
 
-* manage.py: 一个实用的命令行工具，可让你以各种方式与该 Django 项目进行交互。
+* `manage.py`: 一个实用的命令行工具，可让你以各种方式与该 Django 项目进行交互。
 
-* cBlog/__init__.py: 一个空文件，告诉 Python 该目录是一个 Python 包。
+* `cBlog/__init__.py`: 一个空文件，告诉 `Python` 该目录是一个 `Python` 包。
 
-* cBlog/asgi.py: 一个 ASGI 兼容的 Web 服务器的入口，以便运行你的项目。
+* `cBlog/asgi.py`: 一个 `ASGI` 兼容的 `Web` 服务器的入口，以便运行你的项目。
 
-* cBlog/settings.py: 该 Django 项目的设置/配置。
+* `cBlog/settings.py`: 该 `Django` 项目的设置/配置。
 
-* cBlog/urls.py: 该 Django 项目的 URL 声明; 一份由 Django 驱动的网站"目录"。
+* `cBlog/urls.py`: 该 `Django` 项目的 `URL` 声明; 一份由 `Django` 驱动的网站"目录"。
 
-* cBlog/wsgi.py: 一个 WSGI 兼容的 Web 服务器的入口，以便运行你的项目。
+* `cBlog/wsgi.py`: 一个 `WSGI` 兼容的 `Web` 服务器的入口，以便运行你的项目。
 
-接下来我们进入 cBlog 目录输入以下命令，启动服务器：
+接下来我们进入 `cBlog` 目录输入以下命令，启动服务器：
 ```py
 python3 manage.py runserver
 ```
 
-如果不说明，那么端口号默认为 8000。
+如果不说明，那么端口号默认为 `8000`。
 
-在浏览器输入你服务器的 ip（这里我们输入本机 IP 地址： 127.0.0.1:8000） 及端口号，如果正常启动，输出结果如下：
+在浏览器输入你服务器的 `ip`（这里我们输入本机 `IP` 地址： 127.0.0.1:8000） 及端口号，如果正常启动，输出结果如下：
 ![image](https://user-images.githubusercontent.com/81791654/169727975-d7fbe94d-1d0e-42df-9b7c-a11de07f077a.png)
 
 ## 视图和 URL 配置
-在先前创建的 cBlog 目录下的 cBlog 目录新建一个 `views.py` 文件，并输入代码：
+在先前创建的 `cBlog` 目录下的 `cBlog` 目录新建一个 `views.py` 文件，并输入代码：
 
 ```py
 from django.http import HttpResponse
@@ -121,23 +121,23 @@ urlpatterns = [
 ]
 ```
 
-## urls.py中path() 函数详解
-Django path() 可以接收四个参数，分别是两个必选参数：route、view 和两个可选参数：kwargs、name。
+## `urls.py中path()` 函数详解
+`Django path()` 可以接收四个参数，分别是两个必选参数：`route、view` 和两个可选参数：`kwargs、name`。
 
 语法格式：
 ```py
 path(route, view, kwargs=None, name=None)
 ```
 
-* route: 字符串，表示 `URL` 规则，与之匹配的 `URL` 会执行对应的第二个参数 `view`。
+* `route`: 字符串，表示 `URL` 规则，与之匹配的 `URL` 会执行对应的第二个参数 `view`。
 
-* view: 用于执行与正则表达式匹配的 `URL` 请求。
+* `view`: 用于执行与正则表达式匹配的 `URL` 请求。
 
-* kwargs: 视图使用的字典类型的参数。
+* `kwargs`: 视图使用的字典类型的参数。
 
-* name: 用来反向获取 URL。
+* `name`: 用来反向获取 `URL`。
 
-* Django2.0中可以使用 `re_path()` 方法来兼容 1.x 版本中的 `url()` 方法，一些正则表达式的规则也可以通过 `re_path()` 来实现 。
+* `Django2.0` 中可以使用 `re_path()` 方法来兼容 1.x 版本中的 `url()` 方法，一些正则表达式的规则也可以通过 `re_path()` 来实现 。
 
 ```py
 from django.urls import include, re_path
@@ -157,7 +157,7 @@ urlpatterns = [
 
 **模板应用实例**
 
-我们将在 cBlog 目录底下创建 `templates` 目录并建立 `test.html` 文件，整个目录结构如下：
+我们将在 `cBlog` 目录底下创建 `templates` 目录并建立 `test.html` 文件，整个目录结构如下：
 
 ![image](https://user-images.githubusercontent.com/81791654/169734753-4a490720-e346-42da-8e80-db76de4f9e85.png)
 
@@ -189,7 +189,7 @@ def hello(request):
     return render(request, 'hello.html', context)                                                     
 ```
 
-修改`urls.py`文件代码
+修改 `urls.py` 文件代码
 ```py
 from django.urls import path
  
@@ -200,16 +200,16 @@ urlpatterns = [
 ]
 ```
 
-再运行一下`manage.py`
+再运行一下 `manage.py`
 
 `python3 manage.py runserver`
 
 打开浏览器输入http://127.0.0.1:8000/hello/
 ![image](https://user-images.githubusercontent.com/81791654/169740625-af751b48-3b56-445e-850e-1155ee56ddab.png)
 
-可以看到，我们这里使用 render 来替代之前使用的 HttpResponse。render 还使用了一个字典 context 作为参数。
+可以看到，我们这里使用 `render` 来替代之前使用的 `HttpResponse`。`render` 还使用了一个字典 `context` 作为参数。
 
-context 字典中元素的键值 hello 对应了模板中的变量 {{ hello }}。
+`context` 字典中元素的键值 `hello` 对应了模板中的变量 `{{ hello }}`。
 
 
 
@@ -217,7 +217,7 @@ context 字典中元素的键值 hello 对应了模板中的变量 {{ hello }}�
 
 接下来我们将具体介绍模板中常用的语法规则。
 
-### Django 模板标签
+## Django 模板标签
 
 **变量**
 
@@ -228,7 +228,7 @@ view：｛"HTML变量名" : "views变量名"｝
 HTML：｛｛变量名｝｝
 ```
 
-增加`views.py`的文件代码
+增加 `views.py` 的文件代码
 
 ```py
 from django.shortcuts import render
@@ -238,13 +238,13 @@ def thanks(request):
   return  render(request,"thanks.html", {"name":views_name})
 ```
 
-再增加'urls.py'的文件代码
+再增加 'urls.py' 的文件代码
 
 ```html
 path('thanks/', views.thanks),
 ```
 
-在templates文件夹中增加的 `thanks.html` 内容为：
+在 `templates` 文件夹中增加的 `thanks.html` 内容为：
 
 ```html
 <p>{{ name }}</p>
@@ -256,7 +256,7 @@ path('thanks/', views.thanks),
 
 **列表**
 
-将views.py中的代码改写为：
+将 `views.py` 中的代码改写为：
 
 ```py
 from django.shortcuts import render
@@ -266,7 +266,7 @@ def thanks(request):
     return render(request, "thanks.html", {"views_list": views_list})
 ```
 
-templates 中的 `thanks.html`中，可以用 . 索引下标取出对应的元素。
+`templates` 中的 `thanks.html`中，可以用 . 索引下标取出对应的元素。
 
 在`thanks.html`中改写：
 
@@ -287,7 +287,7 @@ def thanks(request):
     return render(request, "thanks.html", {"views_dict": views_dict})
 ```
 
-templates 中的 thanks.html中，可以用 .键 取出对应的值。
+`templates` 中的 `thanks.html` 中，可以用 .键 取出对应的值。
 
 ```html
 <p>{{ views_dict }}</p>
@@ -478,5 +478,96 @@ def mygithub(request):
 ```
 
 根据条件判断是否输出。`if/else`支持嵌套。
-
+```html
 `{% if %}` 标签接受 `and` ， `or` 或者 `not` 关键字来对多个变量做判断 ，或者对变量取反`（not）`，例如：
+
+{% if athlete_list and coach_list %}
+     athletes 和 coaches 变量都是可用的。
+{% endif %}
+```
+
+修改`views.py` 文件代码：
+```py
+from django.shortcuts import render
+
+def thanks(request):
+    views_num = 88
+    return render(request, "thanks.html", {"num": views_num})
+```
+
+修改thanks.html 文件代码：
+```html
+{%if num > 90 and num <= 100 %}
+优秀
+{% elif num > 60 and num <= 90 %}
+合格
+{% else %}
+一边玩去～
+{% endif %}
+```
+
+再访问访问 http://127.0.0.1:8000/thanks，可以看到页面：
+
+**for 标签**
+`{% for %}` 允许我们在一个序列上迭代。
+
+与 Python 的 for 语句的情形类似，循环语法是 `for X in Y` ，Y 是要迭代的序列而 X 是在每一个特定的循环中使用的变量名称。
+
+每一次循环中，模板系统会渲染在 `{% for %}` 和 `{% endfor %}` 之间的所有内容。
+
+例如，给定一个运动员列表 athlete_list 变量，我们可以使用下面的代码来显示这个列表：
+```html
+<ul>
+{% for athlete in athlete_list %}
+    <li>{{ athlete.name }}</li>
+{% endfor %}
+</ul>
+```
+
+修改views.py 文件代码：
+```py
+from django.shortcuts import render
+
+def thanks(request):
+    views_list = ["谢谢你","谢谢你1","谢谢你2","谢谢你3",]
+    return render(request, "thanks.html", {"views_list": views_list})
+```
+
+改变`thanks.html` 文件代码：
+```html
+{% for i in views_list %}
+{{ i }}
+{% endfor %}
+```
+[参考：](https://www.runoob.com/django/django-template.html)
+
+
+### csrf_token
+
+`csrf_token` 用于form表单中，作用是跨站请求伪造保护。
+
+如果不用 `{% csrf_token %}` 标签，在用 form 表单时，要再次跳转页面会报 403 权限错误。
+
+用了`{% csrf_token %}` 标签，在 form 表单提交数据时，才会成功。
+
+解析：
+
+首先，向服务器发送请求，获取登录页面，此时中间件 `csrf` 会自动生成一个隐藏input标签，该标签里的 value 属性的值是一个随机的字符串，用户获取到登录页面的同时也获取到了这个隐藏的input标签。
+
+然后，等用户需要用到form表单提交数据的时候，会携带这个 input 标签一起提交给中间件 csrf，原因是 form 表单提交数据时，会包括所有的 input 标签，中间件 csrf 接收到数据时，会判断，这个随机字符串是不是第一次它发给用户的那个，如果是，则数据提交成功，如果不是，则返回403权限错误。
+
+### 自定义标签和过滤器
+
+1、在应用目录下创建 ariticle 目录(与 templates 目录同级，目录名只能是 ariticle)。
+
+  
+
+
+
+
+
+
+
+
+
+
